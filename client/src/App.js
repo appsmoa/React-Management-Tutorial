@@ -6,6 +6,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { withStyles } from '@material-ui/core/styles';
 import { Component } from 'react';
 
@@ -17,47 +18,38 @@ const styles = theme => ({
   },
   table : {
     minWidth : 1080
+  },
+  progress : {
+    margin : theme.spacing(2)
   }
 })
 
-
-const customers = [
-  {
-    'id' : 1,
-    'image' : 'http://placeimg.com/64/64/tech/1', 
-    'name' : 'wildbear1'  ,
-    'birthday' : '1977/09/31'  ,
-    'gender' : '41'  ,
-    'job' : 'singer1'  ,
-  },
-  {
-    'id' : 2,
-    'image' : 'http://placeimg.com/64/64/tech/2', 
-    'name' : 'wildbear2'  ,
-    'birthday' : '1977/09/32'  ,
-    'gender' : '42'  ,
-    'job' : 'singer2'  ,
-  },
-  {
-    'id' : 3,
-    'image' : 'http://placeimg.com/64/64/tech/3', 
-    'name' : 'wildbear3'  ,
-    'birthday' : '1977/09/33'  ,
-    'gender' : '43'  ,
-    'job' : 'singer3'  ,
-   },
-   {
-     'id' : 4,
-     'image' : 'http://placeimg.com/64/64/tech/4', 
-     'name' : 'wildbear4'  ,
-     'birthday' : '1977/09/34'  ,
-     'gender' : '44'  ,
-     'job' : 'singer4'  ,
-    }
-]
-
 class App extends Component{
-    render(){
+
+  state = {
+    customers : "",
+    completed : 0
+  }
+
+  componentDidMount(){
+    this.timer = setInterval(this.progress, 20)
+    this.callApi()
+    .then(res => this.setState({customers:res}))
+    .catch(err => console.log(err));
+  }
+
+  callApi = async () => {
+    const response = await fetch('/api/customer');
+    const body = await response.json();
+    return body;
+  }
+
+  progress = () =>{
+    const {completed} = this.state;
+    this.setState({ completed : completed >=100 ? 0 : completed+1 });
+  }
+
+  render(){
 
         const { classes } = this.props;
         return (
@@ -74,20 +66,15 @@ class App extends Component{
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  { customers.map( c => {
-                    return (
-                            <Customer 
-                              key = {c.id} 
-                              id = {c.id} 
-                              image = {c.image} 
-                              name = {c.name} 
-                              birthday =  {c.birthday} 
-                              gender =  {c.gender} 
-                              job =  {c.job} 
-                            />
-                        )
-                      })
-                    }
+                  { this.state.customers ? this.state.customers.map( c => {
+                    return ( <Customer key = {c.id} id = {c.id} image = {c.image} name = {c.name} birthday =  {c.birthday} gender =  {c.gender} job =  {c.job} /> )
+                      }) : 
+                        <TableRow>  
+                          <TableCell colSpan="6" align="center">
+                            <CircularProgress className={classes.progress} variant="indeterminate" value={this.state.completed} />
+                          </TableCell>
+                        </TableRow>
+                      }
                   </TableBody>
                 </Table>
             </Paper>
