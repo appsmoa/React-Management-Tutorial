@@ -4,7 +4,7 @@ import logo from './logo.svg';
 function App() {
   return (
     <div className="gray-background">
-      Develop Management System!
+      Develop Management System!!!
     </div>
   );
 }
