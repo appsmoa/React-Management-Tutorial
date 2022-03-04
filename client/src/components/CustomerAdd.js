@@ -1,7 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import {post} from 'axios';
 
+
 class CustomerAdd extends Component {
+
+    
+
     constructor (props){
         super(props);
         this.state = {
@@ -10,9 +14,14 @@ class CustomerAdd extends Component {
             birthday : '',
             gender : '',
             job : '',
-            fileName : ''
+            fileName : '',
+            userNameError : ''
         }
+        
     }
+
+   
+
 
     addCustomer = () =>{
         const url = '/api/customers';
@@ -32,19 +41,27 @@ class CustomerAdd extends Component {
 
     handleFormSubmit = (e) => {
         e.preventDefault();
-        this.addCustomer()
-            .then((response) =>{
-                console.log(response.data);
-                this.props.stateRefresh();
+        if (!e.target.userName.value){
+            this.setState({
+                userNameError : 'err'
             })
-        this.setState({
-            file : null,
-            userName : '',
-            birthday : '',
-            gender : '',
-            job : '',
-            fileName : ''
-        })
+          return;
+        } else {
+            this.addCustomer()
+                .then((response) =>{
+                    console.log(response.data);
+                    this.props.stateRefresh();
+                })
+            this.setState({
+                file : null,
+                userName : '',
+                birthday : '',
+                gender : '',
+                job : '',
+                fileName : '',
+                userNameError : ''
+            })
+        }
     }
 
     handleFileChange = (e) =>{
@@ -55,18 +72,26 @@ class CustomerAdd extends Component {
     }
 
     handleValueChange = (e) => {
+        if (e.target.name=='userName'){
+            this.setState({
+                userNameError : ''
+            })
+        }
         let nextState = {};
         nextState[e.target.name] = e.target.value
         this.setState(nextState)
     }
 
     render() {
+         
         return (
             <form onSubmit={this.handleFormSubmit}>
                 <h1>고객추가</h1>
                 Image : <input type="file" name="file" file={this.state.file} value={this.state.fileName} onChange={this.handleFileChange} /><br/>
-                name : <input type="text" name="userName" value={this.state.userName} onChange={this.handleValueChange}/><br/>
-                birthday : <input type="text" name="birthday" value={this.state.usbirthdayerName} onChange={this.handleValueChange}/><br/>
+                name : <input type="text" name="userName" value={this.state.userName} onChange={this.handleValueChange}/>
+                {this.state.userNameError && <span style={{color : 'red',fontSize:'0.8em'}}> Name은 필수 항목입니다.</span>}
+                <br/>
+                birthday : <input type="text" name="birthday" value={this.state.birthday} onChange={this.handleValueChange}/><br/>
                 gender : <input type="text" name="gender" value={this.state.gender} onChange={this.handleValueChange}/><br/>
                 job : <input type="text" name="job" value={this.state.job} onChange={this.handleValueChange}/><br/>
                 <button type="submit">추가하기</button>

@@ -30,14 +30,14 @@ app.get('/api/hello',(req,res)=>{
 
 app.get('/api/customer',(req,res)=>{
     connection.query(
-      "SELECT * FROM CUSTOMER",
+      "SELECT * FROM CUSTOMER WHERE IsDeleted=0",
       (err, rows, fields) => {
         res.send(rows);
       }
     )
 });
 
-app.get('/api/customer/insert',(req,res)=>{
+app.get('/api/customer/insertsample',(req,res)=>{
   connection.query(
     `INSERT INTO CUSTOMER  (image, name, birthday, gender, job, RDATE)
     VALUES ('http://placeimg.com/64/64/tech/X', 'wildbearX', '1977/09/3X', '4X', 'singerX', NOW())`,
@@ -49,13 +49,30 @@ app.get('/api/customer/insert',(req,res)=>{
 
 app.use('/image',express.static('./upload'));
 app.post('/api/customers',upload.single('image'),(req,res)=>{
-  let sql = "INSERT INTO CUSTOMER VALUE (null,?,?,?,?,?,now())";
-  let image = 'http://localhost:5000/image/' + req.file.filename; 
+  let sql = "INSERT INTO CUSTOMER VALUE (null,?,?,?,?,?,0,now(),null)";
+
+  let image = '';
+  
+  if (req.file){
+    image = 'http://localhost:5000/image/' + req.file.filename; 
+  } else {
+    image = 'http://placeimg.com/64/64/tech/X'; 
+  }
+  
   let name = req.body.name;
   let birthday = req.body.birthday;
   let gender = req.body.gender;
   let job = req.body.job;
   let params = [image, name, birthday,gender,job];
+  connection.query(sql, params,
+    (err,rows,fields)=>{
+      res.send(rows);
+    }
+  );
+})
+app.delete('/api/customers/:id',(req,res) => {
+  let sql = 'UPDATE CUSTOMER SET isDeleted=1, UDATE=now() WHERE id=? ';
+  let params = [req.params.id];
   connection.query(sql, params,
     (err,rows,fields)=>{
       res.send(rows);

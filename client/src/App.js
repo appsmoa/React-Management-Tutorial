@@ -10,6 +10,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { withStyles } from '@material-ui/core/styles';
 import { Component } from 'react';
 import CustomerAdd from './components/CustomerAdd';
+import CustomerDelete from './components/CustomerDelete';
 
 const styles = theme => ({
   root : {
@@ -78,11 +79,12 @@ class App extends Component{
                       <TableCell>Birthday</TableCell>
                       <TableCell>Gender</TableCell>
                       <TableCell>Job</TableCell>
+                      <TableCell>DEL</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     { this.state.customers ? this.state.customers.map( c => {
-                      return ( <Customer key = {c.id} id = {c.id} image = {c.image} name = {c.name} birthday =  {c.birthday} gender =  {c.gender} job =  {c.job} /> )
+                      return ( <Customer stateRefresh={this.stateRefresh} key = {c.id} id = {c.id} image = {c.image} name = {c.name} birthday =  {c.birthday} gender =  {c.gender} job =  {c.job} /> )
                         }) : 
                           <TableRow>  
                             <TableCell colSpan="7" align="center">
