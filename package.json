@@ -7,10 +7,17 @@
         "dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\""
     },
     "dependencies": {
+        "@emotion/react": "^11.8.1",
+        "@emotion/styled": "^11.8.1",
+        "@material-ui/icons": "^4.11.2",
+        "@mui/icons-material": "^5.4.4",
+        "@mui/material": "^5.4.4",
+        "@mui/styled-engine-sc": "^5.4.2",
         "body-parser": "^1.18.3",
         "express": "^4.16.4",
         "multer": "^1.4.4",
-        "mysql": "^2.18.1"
+        "mysql": "^2.18.1",
+        "styled-components": "^5.3.3"
     },
     "devDependencies": {
         "concurrently": "^4.0.1"
